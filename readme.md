@@ -59,7 +59,7 @@ Seleniumを使ったテスト自動化のためのPythonコードです。CSVか
           * 内部ヘルパー関数。指定されたセレクタタイプと値でWebDriverの要素を検索します。
           * 要素が可視状態になるまで待機し、見つからない場合は `NoSuchElementException` を発生させます。
           * サポートされるセレクタタイプ (`id`, `name`, `class_name`, `xpath` など) をマッピングしています。
-      * **`Maps_to_url(self, url, wait_time=0)`**:
+      * **`navigate(self, url, wait_time=0)`**:
           * 指定されたURLにブラウザを遷移させます。
           * `wait_time` オプションで、ページ遷移後に指定した秒数だけ待機できます。
       * **`input_value(self, selector_type, selector_value, value)`**:
@@ -67,6 +67,10 @@ Seleniumを使ったテスト自動化のためのPythonコードです。CSVか
           * 入力前に既存の値をクリアします。
       * **`click_element(self, selector_type, selector_value)`**:
           * 指定された要素を見つけ、クリックします。
+      * **`log_content(self, selector_type, selector_value, content_type, remark)`**:
+          * 指定された要素を見つけ、内容をログに出力します
+      * **`log_remark(self, remark)`**:
+          * 指定された文字列をログに出力します
       * **`take_screenshot(self, filename, remark="", full_page=False)`**:
           * スクリーンショットを撮影し、指定された `filename` で `screenshot_dir` に保存します。
           * `remark` (備考) を追加できます。
@@ -80,7 +84,7 @@ Seleniumを使ったテスト自動化のためのPythonコードです。CSVか
 
 ### CSVファイルのフォーマットとオプション
 
-  * **`コマンド`**: 実行する操作 (例: `navigate`, `input`, `click`, `screenshot`,`log_content`)
+  * **`コマンド`**: 実行する操作 (例: `navigate`, `input`, `click`, `screenshot`,`log_content`,`log_remark`)
   * **`セレクタタイプ`**: 要素を特定する方法 (例: `id`, `name`, `class_name`, `xpath`, `css_selector`, `link_text`, `partial_link_text`, `tag_name`)
   * **`セレクタ値`**: セレクタに対応する値 (例: `username`, `login_button`, `//div[@id='header']`)
   * **`値／ファイルパス`**: `input` コマンドの場合は入力する値、`navigate` コマンドの場合はURL、`screenshot` コマンドの場合は保存するファイル名,`log_content`コマンドの場合は出力したい属性（例：`text`,`value`。指定なしの場合は`text`）
@@ -92,6 +96,8 @@ Seleniumを使ったテスト自動化のためのPythonコードです。CSVか
           * `full_page=True`: 画面全体（スクロールが必要な部分も含む）のスクリーンショットを撮影します。`full_page=False` または未指定の場合は表示領域のみ。
       * `log_content`:
           * `remark=<備考>`: 出力に対する備考、期待値の記載を想定。
+      * `log_content`:
+          * `remark=<備考>`: 任意内容でログを出力する。ログの中で目印となるようなの記載を想定。
 ### 使用方法
 
 1.  上記のPythonコードを `.py` ファイルとして保存します (例: `test_automation.py`)。

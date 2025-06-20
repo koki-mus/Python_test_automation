@@ -8,6 +8,7 @@ import time
 import os
 from PIL import Image # Pillowをインポート (フルページスクリーンショット結合用)
 from datetime import datetime # タイムスタンプ用
+from pathlib import Path
 
 class WebTestAutomation:
     def __init__(self, browser='chrome', screenshot_dir='screenshots', log_filepath='test_log.csv'):
@@ -163,6 +164,7 @@ class WebTestAutomation:
         log_msg = f"スクリーンショットを保存中: {filepath} (備考: {remark}, 全画面: {full_page})"
         self._log("INFO", log_msg)
         self._log("IMG", f"![{filepath}]({filepath})")  # Markdown形式で画像リンクをログに出力
+        self._log("IMG", f'<a src="{filepath}" alt="{filepath}"')  # Markdown形式で画像リンクをログに出力
 
         if full_page:
             if self.driver.name == 'firefox':
@@ -258,6 +260,12 @@ class WebTestAutomation:
             self._log("ERROR", f"要素内容ログ失敗: 指定された要素が見つかりません - タイプ='{selector_type}', 値='{selector_value}'")
         except Exception as e:
             self._log("ERROR", f"要素内容ログ中に予期せぬエラーが発生しました: {e} (タイプ='{selector_type}', 値='{selector_value}')")
+    def log_remark(self, remark=""):
+        """
+        指定されたテキスト内容をログに出力します。
+            remark (str): ログに対する備考。
+        """
+        self._log("TXT", remark)
 
 
     def execute_commands_from_csv(self, csv_filepath):
@@ -306,10 +314,13 @@ class WebTestAutomation:
                         remark = options.get('remark', '')
                         full_page = options.get('full_page', '').lower() == 'true'
                         self.take_screenshot(value_or_path, remark=remark, full_page=full_page)
-                    elif command == 'log_content': # 新しいコマンドの追加
+                    elif command == 'log_content':
                         content_type = value_or_path # 値/ファイルパスの列をcontent_typeとして使用
                         remark = options.get('remark', '')
                         self.log_content(selector_type, selector_value, content_type, remark=remark)
+                    elif command == 'log_remark':
+                        remark = options.get('remark', '')
+                        self.log_remark(remark)
                     else:
                         self._log("WARNING", f"不明なコマンドをスキップしました: {command}")
                 except NoSuchElementException as e:
@@ -332,11 +343,13 @@ if __name__ == "__main__":
     if not os.path.exists(csv_filename):
         print(f"エラー: 指定されたCSVファイルが存在しません: {csv_filename}")
         exit(1)
-
-
+    # スクリーンショットの保存先ディレクトリとログファイルのパス
+    output_dir_name = f"{Path(csv_filename).stem}_{datetime.now().strftime("%Y%m%d_%H%M%S")}"
+    screenshot_dir= f'.\\{output_dir_name}_screenshots'
+    log_filepath=f'{output_dir_name}.csv'
     # テスト実行
     try:
-        automation = WebTestAutomation(browser='chrome', screenshot_dir='my_test_screenshots', log_filepath=f'{csv_filename}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv')
+        automation = WebTestAutomation(browser='chrome', screenshot_dir=screenshot_dir, log_filepath=log_filepath)
         
         automation.execute_commands_from_csv(csv_filename)
     except Exception as e:
