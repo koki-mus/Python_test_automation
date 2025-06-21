@@ -1,0 +1,7 @@
+コマンド,セレクタタイプ,セレクタ値,値／ファイルパス,オプション1,オプション2
+navigate,-,-,https://yuchrszk.blogspot.com/2025/04/blog-post_12.html,wait_time=5,-
+input,name,q,瞑想,-,-
+click,class_name,gsc-search-button,-,wait_time=5,-
+log_content,class_name,profile-textblock,text,remark="自己紹介",
+screenshot,-,-,evidence_01.png,remark=LoginSuccess,full_page=True
+input,name,q,testuser,-,-
